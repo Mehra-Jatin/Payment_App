@@ -5,7 +5,7 @@ const middleware = require('../middleware');
 const mongoose = require('mongoose');
 const { JWT_SECRET } = require('../config');
 
-const User = require('../db');
+const {User,Account} = require('../db');
 
 const router = express.Router();
 
@@ -34,13 +34,15 @@ router.post('/signup',async (req, res) => {
         return res.status(400).json({error:"Invalid Data"});
     }
 
-    const user = User.findOne({
+    const user = await User.findOne({
         username: req.body.username,
         email: req.body.email
     });
-    if (user._id) {
+
+    if (user) {
         return res.status(400).json({ error: "User Already Exists" });
     }
+    const { username, FirstName, LastName, email, password } = req.body;
 
     const newuser = await User.create({
         username:username,
@@ -57,9 +59,9 @@ router.post('/signup',async (req, res) => {
         balance: 1+Math.random()*1000   
 
     });
-    
-    const token = jwt.sign({ userID }, JWT_SECRET);
-    res.json({message: "User Signed Up Successfully",token: token});
+
+    var token = jwt.sign({ userID },JWT_SECRET);
+    res.json({message: "User Signed Up Successfully", token:token });
     }
 );
 

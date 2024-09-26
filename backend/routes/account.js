@@ -1,14 +1,25 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const middleware = require('../middleware');
-const Account = require('../db');
-
+const {Account} = require('../db');
 const router = express.Router();
 
-router.get('/balance',middleware,async (req, res) => {
-    const account = await Account.findOne({userID:req.userID});
 
-    res.json({balance:account.balance});
+router.get('/balance', middleware, async (req, res) => {
+
+    try {
+       
+      const account = await Account.findOne({userID:req.userID});
+
+        if (!account) {
+            return res.status(404).json({ error: "Account not found" });
+        }
+
+        res.json({ balance: account.balance });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
 });
 
 router.post('/transfer',middleware,async (req, res) => {
@@ -43,3 +54,4 @@ router.post('/transfer',middleware,async (req, res) => {
 });
 
 
+module.exports = router;

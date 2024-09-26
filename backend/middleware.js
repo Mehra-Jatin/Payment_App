@@ -7,7 +7,8 @@ const middleware = (req, res, next) => {
         return res.status(403).json({error:"You must be logged in"});
     }
 
-    const token = authorization.replace("Bearer ","");
+    const token = authorization.replace("Bearer ", "").trim();
+
     try{
         const decoded = jwt.verify(token, JWT_SECRET);
 
