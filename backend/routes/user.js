@@ -1,7 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const zod = require('zod');
-
+const middleware = require('../middleware');
 const { JWT_SECRET } = require('../config');
 
 const User = require('../db');
@@ -68,9 +68,22 @@ router.post('/signin', (req, res) => {
 );
 
 
-router.put('/update', async (req, res) => {
-     await User.updateOne({email:req.body.email},{$set:{username:req.body.username,FirstName:req.body.FirstName,LastName:req.body.LastName}});
+const updateSchema = zod.object({
+    username: zod.string().optional(),
+    FirstName: zod.string().optional(),
+    LastName: zod.string().optional(),
+});
+
+router.put('/update',middleware, async (req, res) => {
+    const {success} = updateSchema.safeParse(req.body);
+    if(!success){
+        return res.status(411).json({error:"error in updating"});
     }
+
+    await User.updateOne({_id:req.userID},req.body);
+    res.json({message:"User Updated Successfully"});
+    }
+    
 );
 
 
