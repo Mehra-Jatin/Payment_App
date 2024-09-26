@@ -74,6 +74,7 @@ const updateSchema = zod.object({
     LastName: zod.string().optional(),
 });
 
+
 router.put('/update',middleware, async (req, res) => {
     const {success} = updateSchema.safeParse(req.body);
     if(!success){
@@ -85,6 +86,29 @@ router.put('/update',middleware, async (req, res) => {
     }
     
 );
+
+
+router.get('/bulk', async (req, res) => {
+    const filter = req.query.filter || "";
+    const users  =await User.find({
+        $or:[{
+            FirstName:{"$regex":filter}
+        },
+        {
+            LastName:{"$regex":filter}
+        }]
+    })
+    
+   res.json({
+      USER:users.map(user=>({
+            username:user.username,
+            FirstName:user.FirstName,
+            LastName:user.LastName,
+            _id:user._id
+        }))
+   })
+
+});
 
 
 module.exports = router;
