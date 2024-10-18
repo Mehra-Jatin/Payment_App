@@ -15,7 +15,15 @@ const accountSchema = new mongoose.Schema({
     balance: Number
 });
 
+const historySchema = new mongoose.Schema({
+    userID:{type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+    RecipentID:{type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+    amount: Number,
+    date: Date
+});
+
 const User = mongoose.model("User", userSchema);
 const Account = mongoose.model("Account", accountSchema);
+const History = mongoose.model("History", historySchema);
 
-module.exports = { User, Account };
+module.exports = { User, Account ,History};

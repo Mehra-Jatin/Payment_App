@@ -5,7 +5,7 @@ const middleware = require('../middleware');
 const mongoose = require('mongoose');
 const { JWT_SECRET } = require('../config');
 
-const {User,Account} = require('../db');
+const {User,Account,History} = require('../db');
 
 const router = express.Router();
 
@@ -68,14 +68,17 @@ router.post('/signup',async (req, res) => {
 
 
 
-router.post('/signin', (req, res) => {
-    const { email, password } = req.body;
-    if (!email || !password) {
-        return res.status(422).json({ error: "Please fill all the fields" });
+router.post('/signin' ,async (req, res) => {
+    const { email, password } = req.body;   
+    const user = await User.findOne({ email });
+    if (!user || user.password !== password) {
+
+        return res.status(400).json({ error: "Invalid Credentials" });
     }
-     
-    }   
-);
+    const userID = user._id;
+    var token = jwt.sign({ userID },JWT_SECRET);
+    res.json({ message: "User Signed In Successfully", token:token });
+});
 
 
 const updateSchema = zod.object({
@@ -98,14 +101,30 @@ router.put('/update',middleware, async (req, res) => {
 );
 
 
+router.get('/history',middleware, async (req, res) => {
+    console.log(req.userID);
+    const history = await History.find({userID:req.userID});
+    if(history.length===0){
+        return res.json({message:"No History Found start transferring"});
+    }
+    res.json({
+        history:history.map(h=>({
+            RecipentID:h.RecipentID,
+            amount:h.amount,
+            date:h.date
+        }))
+    });
+    }
+);
+
 router.get('/bulk', async (req, res) => {
     const filter = req.query.filter || "";
     const users  =await User.find({
         $or:[{
-            FirstName:{"$regex":filter}
+            FirstName:{"$regex":filter,"$options": "i"} // i is for case insensitive
         },
         {
-            LastName:{"$regex":filter}
+            LastName:{"$regex":filter,"$options": "i"}
         }]
     })
     
