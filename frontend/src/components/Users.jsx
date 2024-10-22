@@ -1,8 +1,7 @@
 import { useState } from "react"
 import  Button  from "./Button"
 
-export const Users = () => {
-    // Replace with backend call
+function Users() {
     const [users, setUsers] = useState([{
         firstName: "Harkirat",
         lastName: "Singh",
@@ -20,7 +19,8 @@ export const Users = () => {
             {users.map(user => <User user={user} />)}
         </div>
     </>
-}
+};
+
 
 function User({user}) {
     return <div className="flex justify-between">
@@ -42,3 +42,5 @@ function User({user}) {
         </div>
     </div>
 }
+
+export default Users
