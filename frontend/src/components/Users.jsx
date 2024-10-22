@@ -3,8 +3,8 @@ import  Button  from "./Button"
 
 function Users() {
     const [users, setUsers] = useState([{
-        firstName: "Harkirat",
-        lastName: "Singh",
+        firstName: "Xyz",
+        lastName: "abc",
         _id: 1
     }]);
 
