@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom'
 function SignUp() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
     return (
@@ -22,16 +22,16 @@ function SignUp() {
              <SubHeading label={"Enter your infromation to create an account"} />
              <InputBox action={e=>{setFirstName(e.target.value)}} placeholder="John" label={"First Name"} />
              <InputBox action={e=>{setLastName(e.target.value)}} placeholder="Doe" label={"Last Name"} />
-             <InputBox action={e=>{setUsername(e.target.value)}} placeholder="user@gmail.com" label={"Email"} />
+             <InputBox action={e=>{setEmail(e.target.value)}} placeholder="user@gmail.com" label={"Email"} />
              <InputBox action={e=>{setPassword(e.target.value)}} placeholder="123456" label={"Password"} />
              <div className="pt-4">
                <Button label={"Sign up"} action={async()=>{
-                const response =fetch('http://localhost:5000/api/auth/signup', {
+                const response =fetch('http://localhost:5000/api/v1/user/signup', {
                   method: 'POST',
                   body: JSON.stringify({
                     firstName: firstName,
                     lastName: lastName,
-                    username: username,
+                    email: email,
                     password: password
                   }),
                 } )
