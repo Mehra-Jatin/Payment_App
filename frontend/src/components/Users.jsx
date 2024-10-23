@@ -1,6 +1,6 @@
 import { useState } from "react"
-import  Button  from "./Button"
-
+import  Button  from "./Button"  
+import { useNavigate } from "react-router-dom";
 function Users() {
     const [users, setUsers] = useState([{
         firstName: "Xyz",
@@ -8,6 +8,7 @@ function Users() {
         _id: 1
     }]);
 
+    const navigate = useNavigate();
     return <>
         <div className="font-bold mt-6 text-lg">
             Users
@@ -16,13 +17,13 @@ function Users() {
             <input type="text" placeholder="Search users..." className="w-full px-2 py-1 border rounded border-slate-200"></input>
         </div>
         <div>
-            {users.map(user => <User user={user} />)}
+            {users.map(user => <User user={user} sendmoney={()=>{navigate("/send")}}/>)}
         </div>
     </>
 };
 
+function User({user,sendmoney}) {
 
-function User({user}) {
     return <div className="flex justify-between">
         <div className="flex">
             <div className="rounded-full h-12 w-12 bg-slate-200 flex justify-center mt-1 mr-2">
@@ -36,9 +37,9 @@ function User({user}) {
                 </div>
             </div>
         </div>
-
+         
         <div className="flex flex-col justify-center h-ful">
-            <Button label={"Send Money"} />
+            <Button label={"Send Money"} action={sendmoney} />
         </div>
     </div>
 }
