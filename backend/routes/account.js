@@ -15,7 +15,7 @@ router.get('/balance', middleware, async (req, res) => {
             return res.status(404).json({ error: "Account not found" });
         }
 
-        res.json({ balance: account.balance });
+        res.json({ balance: account.balance , name:account.name});
     } catch (err) {
         console.log(err);
         res.status(500).json({ error: "Internal Server Error" });

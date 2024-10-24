@@ -10,7 +10,7 @@ const {User,Account,History} = require('../db');
 const router = express.Router();
 
 const signupSchema = zod.object({
-            username: zod.string(),
+    
             FirstName: zod.string(),
             LastName: zod.string().optional(),
             password: zod.string(),
@@ -26,47 +26,44 @@ router.get('/', (req, res) => {
 
 
 
-router.post('/signup',async (req, res) => {
-
-    const {success} = signupSchema.safeParse(req.body);
-    // safeParse returns an object with a success  key boolean in nature 
-    if(!success){
-        return res.status(400).json({error:"Invalid Data"});
-    }
-
-    const user = await User.findOne({
-        username: req.body.username,
-        email: req.body.email
-    });
-
-    if (user) {
+router.post('/signup', async (req, res) => {
+    try {
+      
+      const result = signupSchema.safeParse(req.body);
+      if (!result.success) {
+        console.log(result.error.errors);  
+        return res.status(400).json({ error: "Invalid Data", details: result.error.errors });
+      }
+  
+  
+      const existingUser = await User.findOne({ email: req.body.email });
+      if (existingUser) {
         return res.status(400).json({ error: "User Already Exists" });
-    }
-    const { username, FirstName, LastName, email, password } = req.body;
-
-    const newuser = await User.create({
-        username:username,
-        FirstName:FirstName,
-        LastName:LastName,
-        email:email,
-        password:password
-    });
-
-    const userID = newuser._id;
-
-    await Account.create({
+      }
+  
+      const { FirstName, LastName, email, password } = req.body;
+  
+      
+      const newUser = await User.create({ FirstName, LastName, email, password });
+      const userID = newUser._id;
+  
+      
+      await Account.create({
         userID,
-        balance: 1+Math.random()*1000   
-
-    });
-
-    var token = jwt.sign({ userID },JWT_SECRET);
-    res.json({message: "User Signed Up Successfully", token:token });
+        name: FirstName,
+        balance: (1 + Math.random() * 1000).toFixed(3),  
+      });
+  
+      
+      const token = jwt.sign({ userID }, JWT_SECRET);
+      return res.json({ message: "User Signed Up Successfully", token });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: "Internal Server Error" });
     }
-);
+  });
 
-
-
+  
 
 router.post('/signin' ,async (req, res) => {
     const { email, password } = req.body;   
