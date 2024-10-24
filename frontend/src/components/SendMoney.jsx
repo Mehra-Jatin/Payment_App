@@ -1,12 +1,43 @@
 import React from "react";
 import { useSearchParams } from "react-router-dom";
 import { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 function SendMoney (){
+    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const id = searchParams.get("id");
     const name = searchParams.get("name");
     const [amount, setAmount] = useState(0);
+
+
+    const handleTransfer = async () => {
+        try {
+          const response = await fetch("http://localhost:5000/api/v1/account/transfer", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",  
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+            body: JSON.stringify({
+              to: id,
+              amount: Number(amount),  
+            }),
+          });
+    
+          if (!response.ok) {
+            throw new Error("Transfer failed");
+          }
+    
+          const result = await response.json();
+          console.log(result);
+
+          navigate('/dashboard');
+        } catch (error) {
+            console.error("Error transferring money:", error);
+        }
+      };
+
+
     return <div class="flex justify-center h-screen bg-gray-100">
         <div className="h-full flex flex-col justify-center">
             <div
@@ -18,9 +49,9 @@ function SendMoney (){
                 <div class="p-6">
                 <div class="flex items-center space-x-4">
                     <div class="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
-                    <span class="text-2xl text-white">A</span>
+                    <span class="text-2xl text-white">{name[0]}</span>
                     </div>
-                    <h3 class="text-2xl font-semibold">Name</h3>
+                    <h3 class="text-2xl font-semibold">{name}</h3>
                 </div>
                 <div class="space-y-4">
                     <div class="space-y-2">
@@ -38,18 +69,8 @@ function SendMoney (){
                         placeholder="Enter amount"
                     />
                     </div>
-                    <button onClick={() => {
-                         fetch("http://localhost:5000/api/v1/account/transfer", {
-                            method: "POST",
-                            headers: {
-                                Authorization: "Bearer " + localStorage.getItem("token"),
-                            },
-                            body: JSON.stringify({
-                                to: id,
-                                amount: amount,
-                            })})
-                    }}
-                    class="justify-center rounded-md text-sm font-medium ring-offset-background transition-colors h-10 px-4 py-2 w-full bg-green-500 text-white">
+                    <button  onClick={handleTransfer}
+                     class="justify-center rounded-md text-sm font-medium ring-offset-background transition-colors h-10 px-4 py-2 w-full bg-green-500 text-white">
                         Initiate Transfer
                     </button>
                 </div>
