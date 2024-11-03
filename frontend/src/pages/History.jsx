@@ -32,7 +32,6 @@ function History() {
     <div>
       <AppBar />
       <div className="container mx-auto p-4">
-        <h2 className="font-bold mt-6 text-xl text-gray-800">Users</h2>
         <div className="my-4">
           {history.length > 0 ? (
             history.map(user => <User key={user.RecipentID} user={user} />)
