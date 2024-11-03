@@ -99,19 +99,22 @@ router.put('/update',middleware, async (req, res) => {
 
 
 router.get('/history',middleware, async (req, res) => {
-    console.log(req.userID);
-    const history = await History.find({userID:req.userID});
-    if(history.length===0){
-        return res.json({message:"No History Found start transferring"});
-    }
+    try{
+    const history = await History.find({ userID: req.userID });
     res.json({
-        history:history.map(h=>({
-            RecipentID:h.RecipentID,
-            amount:h.amount,
-            date:h.date
-        }))
+      history: history.length > 0
+        ? history.map(h => ({
+            RecipentID: h.RecipentID,
+            amount: h.amount,
+            date: h.date,
+          }))
+        : []
     });
-    }
+  } catch (error) {
+    console.error('Error fetching history:', error);
+    res.status(500).json({ error: "Failed to fetch history" });
+  }
+}
 );
 
 router.get('/bulk', async (req, res) => {
@@ -136,5 +139,19 @@ router.get('/bulk', async (req, res) => {
 
 });
 
+router.get('/about',async (req, res) => {
+      const id = req.query.id;
+      const user = await User.findById(id);
+        if(!user){
+            return res.status(404).json({error:"User not found"});
+        }
+        res.json({
+            username:user.username,
+            FirstName:user.FirstName,
+            LastName:user.LastName,
+            _id:user._id
+    });
+}
+);
 
 module.exports = router;
