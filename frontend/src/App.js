@@ -2,7 +2,7 @@ import React from 'react'
 import SignUp from './pages/SignUp'
 import SignIn from './pages/SignIn'
 import DashBoard from './pages/DashBoard'
-import {BrowserRouter as Router, Route,Routes} from 'react-router-dom'
+import {BrowserRouter as Router, Route,Routes, Navigate} from 'react-router-dom'
 import SendMoney from './components/SendMoney'
 import History from './pages/History'
 
@@ -11,6 +11,7 @@ const App = () => {
     <> 
      <Router>
         <Routes>
+          <Route path="/" element={<Navigate to="/signup"/>} />
           <Route path="/signup" element={<SignUp/>} />
           <Route path="/signin" element={<SignIn/>} />
           <Route path="/dashboard" element={<DashBoard/>} />
