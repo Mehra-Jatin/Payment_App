@@ -1,18 +1,11 @@
 import React from 'react'
-import Button from './Button'
-
 function AppBar({firstName}) {
+    
   return (
     <div className="shadow h-14 flex justify-between ">
     <div className="flex flex-col justify-center h-full ml-4">
         Payment App
-    </div>
-    <div className="flex flex-col justify-center h-full mx-4 mt-1">
-        <Button label={"History"} action={() => {}} />
-         </div>   
-          <div className="flex flex-col justify-center h-full mx-4 mt-1">
-        <Button label={"History"} action={() => {}} />
-         </div>  
+    </div> 
     <div className="flex">
         
         <div className="flex flex-col justify-center h-full mr-4">
